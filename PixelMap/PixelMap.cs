@@ -8,22 +8,50 @@ using System.Threading.Tasks;
 
 namespace PixelMapSharp
 {
+    /// <summary>
+    /// A container of mutable pixel data.</summary>
     public class PixelMap
     {
+        /// <summary>
+        /// Creates a blank PixelMap of desired width and height.</summary>
         public PixelMap(int width, int height)
         {
-            map = new Color[width, height];
             Width = width;
             Height = height;
+            map = new Pixel[Width, Height];
             BPP = 4;
             format = PixelFormat.Format32bppArgb;
         }
 
+        /// <summary>
+        /// Clones a PixelMap.</summary>
+        public PixelMap(PixelMap original)
+        {
+            Width = original.Width;
+            Height = original.Height;
+            map = new Pixel[Width, Height];
+
+            BPP = original.BPP;
+            format = original.format;
+
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    this[x, y] = original[x, y];
+                }
+            }
+        }
+
+        /// <summary>
+        /// Quickly creates a PixelMap from a Bitmap.</summary>
+        /// <seealso cref="PixelMap.SlowLoad">
+        /// Copies a Bitmap through slow pixel-by-pixel reads. </seealso>
         public PixelMap(Bitmap b)
         {
             Width = b.Width;
             Height = b.Height;
-            map = new Color[Width, Height];
+            map = new Pixel[Width, Height];
             format = b.PixelFormat;
 
 
@@ -38,6 +66,8 @@ namespace PixelMapSharp
                 case PixelFormat.Format24bppRgb:
                     BPP = 3;
                     break;
+                default:
+                    throw new FormatException("PixelFormat cannot be loaded quickly. Try PixelMap.SlowLoad instead.");
             }
 
 
@@ -53,17 +83,20 @@ namespace PixelMapSharp
                     int offset = (y * data.Width + x) * BPP;
 
                     byte B = raw[offset];
-                    byte G = raw[offset + 1];
-                    byte R = raw[offset + 2];
+                    offset++;
+                    byte G = raw[offset];
+                    offset++;
+                    byte R = raw[offset];
+
+                    byte A = 0;
                     if (BPP == 4)
                     {
-                        byte A = raw[offset + 3];
-                        map[x, y] = Color.FromArgb(R, G, B, A);
+                        offset++;
+                        A = raw[offset];
                     }
-                    else
-                    {
-                        map[x, y] = Color.FromArgb(R, G, B);
-                    }
+
+                    map[x, y] = new Pixel(A, R, G, B);
+
 
                 }
             }
@@ -71,90 +104,112 @@ namespace PixelMapSharp
             b.UnlockBits(data);
         }
 
-
-        private readonly Color[,] map;
+        /// <summary>
+        /// The width of the PixelMap in pixels.</summary>
         public readonly int Width;
+        /// <summary>
+        /// The height of the PixelMap in pixels.</summary>
         public readonly int Height;
-        private readonly int BPP = 4;
+
+
+        private readonly Pixel[,] map;
+
+        private readonly int BPP;
         private readonly PixelFormat format;
 
-        public Color this[int x, int y]
+        /// <summary>
+        /// Access a Pixel of the PixelMap from its X and Y coordinates.</summary>
+        public Pixel this[int x, int y]
         {
-            get { return map[x, y]; }
-            set { map[x, y] = value; }
-        }
-
-        public Color this[int i]
-        {
-            get { return map[i / Height, i % Height]; }
-            set { map[i / Height, i % Height] = value; }
-        }
-
-        public void DrawLine(Point a, Point b, Color c)
-        {
-            int dx = Math.Abs(b.X - a.X), sx = a.X < b.X ? 1 : -1;
-            int dy = -Math.Abs(b.Y - a.Y), sy = a.Y < b.Y ? 1 : -1;
-            int err = dx + dy, e2;
-
-            while (true)
+            get
             {
-                if (Inside(a))
-                    this[a.X, a.Y] = c;
-
-                if (a.X == b.X && a.Y == b.Y) break;
-
-                e2 = 2 * err;
-
-                if (e2 > dy)
-                {
-                    err += dy;
-                    a.X += sx;
-                }
-                else if (e2 < dx)
-                {
-                    err += dx;
-                    a.Y += sy;
-                }
+                if (Inside(new Point(x, y)))
+                    return map[x, y];
+                return map[Math.Max(Math.Min(x, Width - 1), 0), Math.Max(Math.Min(y, Height - 1), 0)];
+            }
+            set
+            {
+                if (Inside(new Point(x, y)))
+                    map[x, y] = value;
             }
         }
 
+        /// <summary>
+        /// Access a Pixel of the PixelMap from its X and Y coordinates contained within a Point.</summary>
+        public Pixel this[Point p]
+        {
+            get { return this[p.X, p.Y]; }
+            set { this[p.X, p.Y] = value; }
+        }
+
+        /// <summary>
+        /// Access a Pixel of the PixelMap from its flattened index.</summary>
+        public Pixel this[int i]
+        {
+            get { return this[i / Height, i % Height]; }
+            set { this[i / Height, i % Height] = value; }
+        }
+
+        /// <summary>
+        /// Determine if a point is within this PixelMap.</summary>
         public bool Inside(Point p)
         {
             return (p.X >= 0 && p.Y >= 0 && p.X < Width && p.Y < Height);
         }
 
-        public Bitmap Bitmap
+        /// <summary>
+        /// Produce a Bitmap from this PixelMap.</summary>
+        public Bitmap GetBitmap()
         {
-            get
+            var bitmap = new Bitmap(Width, Height);
+
+            var data = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, format);
+            int bytes = Math.Abs(data.Stride) * bitmap.Height;
+
+            byte[] raw = new byte[bytes];
+
+            for (int x = 0; x < Width; x++)
             {
-                var bitmap = new Bitmap(Width, Height);
-
-                var data = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, format);
-                int bytes = Math.Abs(data.Stride) * bitmap.Height;
-
-                byte[] raw = new byte[bytes];
-
-                for (int x = 0; x < Width; x++)
+                for (int y = 0; y < Height; y++)
                 {
-                    for (int y = 0; y < Height; y++)
+                    int offset = (y * data.Width + x) * BPP;
+
+                    Pixel p = this[x, y];
+
+                    raw[offset] = p.B;//BLUE
+                    offset++;
+                    raw[offset] = p.G;//GREEN
+                    offset++;
+                    raw[offset] = p.R;//RED
+                    if (BPP == 4)
                     {
-                        int offset = (y * data.Width + x) * BPP;
-
-                        Color c = this[x, y];
-
-                        raw[offset] = c.B;
-                        raw[offset + 1] = c.G;
-                        raw[offset + 2] = c.R;
-                        if (BPP == 4)
-                            raw[offset + 3] = c.A;
+                        offset++;
+                        raw[offset] = p.A;//ALPHA
                     }
+
                 }
-
-                System.Runtime.InteropServices.Marshal.Copy(raw, 0, data.Scan0, bytes);
-                bitmap.UnlockBits(data);
-
-                return bitmap;
             }
+
+            System.Runtime.InteropServices.Marshal.Copy(raw, 0, data.Scan0, bytes);
+            bitmap.UnlockBits(data);
+
+            return bitmap;
+        }
+        /// <summary>
+        /// Load a Bitmap pixel-by-pixel, slowly.</summary>
+        public static PixelMap SlowLoad(Bitmap b)
+        {
+            PixelMap m = new PixelMap(b.Width, b.Height);
+
+            for (int x = 0; x < b.Width; x++)
+            {
+                for (int y = 0; y < b.Height; y++)
+                {
+                    m[x, y] = new Pixel(b.GetPixel(x, y));
+                }
+            }
+
+            return m;
         }
 
     }
