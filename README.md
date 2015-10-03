@@ -15,6 +15,12 @@ When an image needs to be converted to or from GDI's Bitmap, the low level memor
 Color is handled by the Pixel class, solving GDI's HSL issues such as an inability to create colors from the HSL
 colorspace despite the inverse operation being easily possible.
 
+## Installation
+
+PixelMap is best installed through NuGet.
+
+    Install-Package PixelMap
+
 ## By Example
 
 ### Changing Hue
