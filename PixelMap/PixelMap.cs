@@ -67,7 +67,7 @@ namespace PixelMapSharp
                     BPP = 3;
                     break;
                 default:
-                    throw new FormatException("PixelFormat cannot be loaded quickly. Try PixelMap.SlowLoad instead.");
+                    throw new FormatException("PixelFormat cannot be loaded. Try PixelMap.SlowLoad instead.");
             }
 
 
