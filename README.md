@@ -3,11 +3,11 @@ High performance bitmap with a focus on pixel-level editing. No more lock bits.
 
 ## Why use PixelMap?
 
-When manipulating a Bitmap at the pixel level, the GetPixel and SetPixel approach is simply not good enough.
-Apart from the ugly Java-like syntax, these methods are magnitudes slower than they should be because they have to deal with the layers of complexity contained within GDI.
+When manipulating a Bitmap at the pixel level, the GetPixel and SetPixel approach is simply lackluster.
+Apart from the ugly Java-like syntax, these methods are magnitudes slower than they should be due to the layers of extra complexity contained within GDI.
 
-Many solutions to this issue go through the route of low level memory management ('lockbits'), an ugly and dangerous route that requires unsafe code to be written.
-Whilst this offers the speed desired, it adds unnecessary complexity to your code.
+Many solutions to this issue go through the route of low level memory management ('lockbits'), an ugly route that requires unsafe code to be written.
+Whilst this offers the speed desired, it also adds unnecessary complexity to your code.
 
 PixelMap solves this issue by replacing the Bitmap class entirely, offering a sleeker and faster approach to image manipulation.
 When an image needs to be converted to or from GDI's Bitmap, the low level memory management is handled out of sight safely.
