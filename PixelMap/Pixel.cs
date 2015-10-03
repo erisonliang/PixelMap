@@ -140,7 +140,7 @@ namespace PixelMapSharp
             }
             set
             {
-                this = new Pixel(value, Saturation, Lightness,A);
+                this = new Pixel(value, Saturation, Lightness, A);
             }
         }
 
@@ -213,6 +213,14 @@ namespace PixelMapSharp
             {
                 this = new Pixel(Hue, Saturation, value, A);
             }
+        }
+
+        /// <summary>
+        /// The GDI color equivalent.</summary>
+        public Color Color
+        {
+            get { return Color.FromArgb(A, R, G, B); }
+            set { this = new Pixel(value.A, value.R, value.G, value.B); }
         }
     }
 }

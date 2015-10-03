@@ -61,7 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Color.cs" />
+    <Compile Include="Pixel.cs" />
     <Compile Include="PixelMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
