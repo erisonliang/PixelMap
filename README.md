@@ -37,7 +37,7 @@ This simple example loads and saves an image, modifying the hue of the pixels.
         Pixel pixel = map[x, y];
         
         //Create a hue value
-        float value = ((double)x/map.Width)*360d;
+        double value = ((double)x/map.Width)*360d;
       
         //Set the hue value to our sample
         pixel.Hue = value;
