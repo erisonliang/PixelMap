@@ -12,8 +12,7 @@ Whilst this offers the speed desired, it also adds unnecessary complexity to you
 PixelMap solves this issue by replacing the Bitmap class entirely, offering a sleeker and faster approach to image manipulation.
 When an image needs to be converted to or from GDI's Bitmap, the low level memory management is handled out of sight safely.
 
-Color is handled by the Pixel class, solving GDI's HSL issues such as an inability to create colors from the HSL
-colorspace despite the inverse operation being easily possible.
+Color is handled by the Pixel class, filling in where GDI failed, such as HSL color constructors and color mixers.
 
 ## Installation
 
