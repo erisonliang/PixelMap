@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace PixelMapSharp
 
         /// <summary>
         /// Creates a pixel from ARGB values.</summary>
-        public Pixel(int a ,int r, int g, int b) : this((byte)a, (byte)r, (byte)g,(byte)b) { }
+        public Pixel(int a, int r, int g, int b) : this((byte)a, (byte)r, (byte)g, (byte)b) { }
 
         /// <summary>
         /// Creates a pixel from RGB values.</summary>
@@ -92,17 +93,30 @@ namespace PixelMapSharp
         }
 
         /// <summary>
-        /// The alpha value of the Pixel.</summary>
+        /// The alpha value of the Pixel from 0 to 255.</summary>
         public byte A;
         /// <summary>
-        /// The red value of the Pixel.</summary>
+        /// The red value of the Pixel from 0 to 255.</summary>
         public byte R;
         /// <summary>
-        /// The green value of the Pixel.</summary>
+        /// The green value of the Pixel from 0 to 255.</summary>
         public byte G;
         /// <summary>
-        /// The blue value of the Pixel.</summary>
+        /// The blue value of the Pixel from 0 to 255.</summary>
         public byte B;
+
+        /// <summary>
+        /// The alpha value of the Pixel from 0 to 1.</summary>
+        public double AValue { get { return A / 255d; } set { A = (byte)(value * 255d); } }
+        /// <summary>
+        /// The red value of the Pixel from 0 to 1.</summary>
+        public double RValue { get { return R / 255d; } set { R = (byte)(value * 255d); } }
+        /// <summary>
+        /// The green value of the Pixel from 0 to 1.</summary>
+        public double GValue { get { return G / 255d; } set { G = (byte)(value * 255d); } }
+        /// <summary>
+        /// The blue value of the Pixel from 0 to 1.</summary>
+        public double BValue { get { return B / 255d; } set { B = (byte)(value * 255d); } }
 
 
         /// <summary>
@@ -234,6 +248,38 @@ namespace PixelMapSharp
         {
             get { return Color.FromArgb(A, R, G, B); }
             set { this = new Pixel(value.A, value.R, value.G, value.B); }
+        }
+
+
+        /// <summary>
+        /// Additive mix of two pixels.</summary>
+        public static Pixel operator +(Pixel a, Pixel b)
+        {
+            return new Pixel(
+                (byte)((a.AValue / 2 + b.AValue / 2) * 255),
+                (byte)((a.RValue / 2 + b.RValue / 2) * 255),
+                (byte)((a.GValue / 2 + b.GValue / 2) * 255), 
+                (byte)((a.BValue / 2 + b.BValue / 2) * 255));
+        }
+        /// <summary>
+        /// Multiplicative mix of two pixels.</summary>
+        public static Pixel operator *(Pixel a, Pixel b)
+        {
+            return new Pixel(
+                (byte)((a.AValue * b.AValue) * 255),
+                (byte)((a.RValue * b.RValue) * 255),
+                (byte)((a.GValue * b.GValue) * 255),
+                (byte)((a.BValue * b.BValue) * 255));
+        }
+        /// <summary>
+        /// Difference mix of two pixels.</summary>
+        public static Pixel operator -(Pixel a, Pixel b)
+        {
+            return new Pixel(
+                (byte)(Math.Abs(a.AValue / 2 - b.AValue / 2) * 255),
+                (byte)(Math.Abs(a.RValue / 2 - b.RValue / 2) * 255), 
+                (byte)(Math.Abs(a.GValue / 2 - b.GValue / 2) * 255), 
+                (byte)(Math.Abs(a.BValue / 2 - b.BValue / 2) * 255));
         }
     }
 }
