@@ -18,6 +18,15 @@ namespace PixelMapSharp
             G = c.G;
             B = c.B;
         }
+
+        /// <summary>
+        /// Creates a pixel from integer RGB values.</summary>
+        public Pixel(int r, int g, int b) : this((byte)r, (byte)g, (byte)b) { }
+
+        /// <summary>
+        /// Creates a pixel from ARGB values.</summary>
+        public Pixel(int a ,int r, int g, int b) : this((byte)a, (byte)r, (byte)g,(byte)b) { }
+
         /// <summary>
         /// Creates a pixel from RGB values.</summary>
         public Pixel(byte r, byte g, byte b)
