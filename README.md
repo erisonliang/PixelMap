@@ -28,7 +28,7 @@ PixelMap is best installed through NuGet.
 This simple example loads and saves an image, modifying the hue of the pixels.
 
     //Quickly load a PixelMap through a Bitmap
-    PixelMap map = new PixelMap(new Bitmap("Lenna.png"));
+    PixelMap map = new PixelMap("Lenna.png");
     
     for (int x = 0; x < map.Width; x++)
     {
@@ -38,7 +38,7 @@ This simple example loads and saves an image, modifying the hue of the pixels.
         Pixel pixel = map[x, y];
         
         //Create a hue value
-        float value = ((float)x/map.Width)*360f;
+        float value = ((double)x/map.Width)*360d;
       
         //Set the hue value to our sample
         pixel.Hue = value;
