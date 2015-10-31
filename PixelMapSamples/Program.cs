@@ -23,7 +23,7 @@ namespace PixelMapSamples
                     Pixel pixel = map[x, y];
 
                     //Create a hue value
-                    float value = ((float)x/map.Width)*360f;
+                    double value = ((double)x / map.Width) * 360d;
 
                     //Set the hue value to our sample
                     pixel.Hue = value;

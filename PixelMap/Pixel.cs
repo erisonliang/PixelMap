@@ -40,16 +40,16 @@ namespace PixelMapSharp
 
         /// <summary>
         /// Creates a pixel from HSL-A values.</summary>
-        public Pixel(float hue, float saturation, float lightness, byte alpha)
+        public Pixel(double hue, double saturation, double lightness, byte alpha)
         {
-            float q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
-            float p = 2 * lightness - q;
+            double q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
+            double p = 2 * lightness - q;
 
             hue /= 360f;
 
-            float r = hueToRGB(p, q, hue + 1 / 3f);
-            float g = hueToRGB(p, q, hue);
-            float b = hueToRGB(p, q, hue - 1 / 3f);
+            double r = hueToRGB(p, q, hue + 1 / 3f);
+            double g = hueToRGB(p, q, hue);
+            double b = hueToRGB(p, q, hue - 1 / 3f);
 
             A = alpha;
             R = window(r * 255);
@@ -59,11 +59,11 @@ namespace PixelMapSharp
 
         /// <summary>
         /// Creates a pixel from HSL values.</summary>
-        public Pixel(float hue, float saturation, float lightness)
+        public Pixel(double hue, double saturation, double lightness)
             : this(hue, saturation, lightness, 255)
         { }
 
-        private static float hueToRGB(float p, float q, float t)
+        private static double hueToRGB(double p, double q, double t)
         {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
@@ -73,7 +73,7 @@ namespace PixelMapSharp
             return p;
         }
 
-        private static byte window(float c)
+        private static byte window(double c)
         {
             return (byte)Math.Min(Math.Max(0, c), 255);
         }
@@ -94,16 +94,16 @@ namespace PixelMapSharp
 
         /// <summary>
         /// The Hue value of the Pixel, radially spanning from 0 to 360 degrees.</summary>
-        public float Hue
+        public double Hue
         {
             get
             {
-                float r = R / 255.0f;
-                float g = G / 255.0f;
-                float b = B / 255.0f;
+                double r = R / 255.0f;
+                double g = G / 255.0f;
+                double b = B / 255.0f;
 
-                float max = r;
-                float min = r;
+                double max = r;
+                double min = r;
 
                 if (g > max) max = g;
                 if (b > max) max = b;
@@ -111,9 +111,9 @@ namespace PixelMapSharp
                 if (g < min) min = g;
                 if (b < min) min = b;
 
-                float delta = max - min;
+                double delta = max - min;
 
-                float hue = 0.0f;
+                double hue = 0.0f;
 
                 if (r == max)
                 {
@@ -146,19 +146,19 @@ namespace PixelMapSharp
 
         /// <summary>
         /// The saturation value of the Pixel.</summary>
-        public float Saturation
+        public double Saturation
         {
             get
             {
-                float r = R / 255.0f;
-                float g = G / 255.0f;
-                float b = B / 255.0f;
+                double r = R / 255.0f;
+                double g = G / 255.0f;
+                double b = B / 255.0f;
 
-                float l;
-                float s = 0;
+                double l;
+                double s = 0;
 
-                float max = r;
-                float min = r;
+                double max = r;
+                double min = r;
 
                 if (g > max) max = g;
                 if (b > max) max = b;
@@ -190,16 +190,16 @@ namespace PixelMapSharp
         }
         /// <summary>
         /// The lightness value of the Pixel.</summary>
-        public float Lightness
+        public double Lightness
         {
             get
             {
-                float r = R / 255.0f;
-                float g = G / 255.0f;
-                float b = B / 255.0f;
+                double r = R / 255.0f;
+                double g = G / 255.0f;
+                double b = B / 255.0f;
 
-                float max = r;
-                float min = r;
+                double max = r;
+                double min = r;
 
                 if (g > max) max = g;
                 if (b > max) max = b;
