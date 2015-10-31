@@ -51,9 +51,13 @@ namespace PixelMapSharp
         /// Creates a pixel from HSL-A values.</summary>
         public Pixel(double hue, double saturation, double lightness, byte alpha)
         {
+            lightness %= 1;
+            saturation %= 1;
+
             double q = lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation;
             double p = 2 * lightness - q;
 
+            hue %= 360;
             hue /= 360f;
 
             double r = hueToRGB(p, q, hue + 1 / 3f);
