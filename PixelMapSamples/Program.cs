@@ -13,7 +13,7 @@ namespace PixelMapSamples
         static void Main(string[] args)
         {
             //Quickly load a PixelMap through a Bitmap
-            PixelMap map = new PixelMap(new Bitmap("Lenna.png"));
+            PixelMap map = new PixelMap("Lenna.png");
 
             for (int x = 0; x < map.Width; x++)
             {

@@ -44,6 +44,11 @@ namespace PixelMapSharp
         }
 
         /// <summary>
+        /// Quickly creates a PixelMap from a file path.</summary>
+        public PixelMap(string s) : this(new Bitmap(s))
+        { }
+
+        /// <summary>
         /// Quickly creates a PixelMap from a Bitmap.</summary>
         /// <seealso cref="PixelMap.SlowLoad">
         /// Copies a Bitmap through slow pixel-by-pixel reads. </seealso>
